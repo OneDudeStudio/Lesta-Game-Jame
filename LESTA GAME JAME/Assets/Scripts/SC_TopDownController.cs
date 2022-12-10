@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(CapsuleCollider))]
@@ -16,6 +17,10 @@ public class SC_TopDownController : MonoBehaviour
     private float _cameraDistance = 7f;
     [SerializeField]
     private Camera _playerCamera;
+    [SerializeField]
+    private Transform head;
+    [SerializeField]
+    private Transform body;
     
     [Space]
     [SerializeField]
@@ -28,8 +33,9 @@ public class SC_TopDownController : MonoBehaviour
     private float _gravity = 14.0f;
     [SerializeField]
     private float _maxVelocityChange = 10.0f;
-    
+    [SerializeField]
     private Rigidbody _rigidbody;
+    
     private GameObject _targetObject;
     private Vector2 _playerPosOnScreen;
     private Vector2 _cursorPosition;
@@ -77,9 +83,9 @@ public class SC_TopDownController : MonoBehaviour
         ApplyGravity();
         CameraFollow(cameraOffset);
         AimRotation();
-        Rotate();
+        RotateHead();
+        RotateBody();
     }
-    
 
     private void Move(Vector3 targetVelocity)
     {
@@ -111,10 +117,32 @@ public class SC_TopDownController : MonoBehaviour
         _targetObject.transform.LookAt(new Vector3(transform.position.x, _targetObject.transform.position.y, transform.position.z));
     }
 
-    private void Rotate()
+    private void RotateHead()
     {
-        transform.LookAt(new Vector3(_targetObject.transform.position.x, transform.position.y, _targetObject.transform.position.z));
-        transform.LookAt(new Vector3(_targetObject.transform.position.x, transform.position.y, _targetObject.transform.position.z));
+        head.LookAt(new Vector3(_targetObject.transform.position.x, head.position.y, _targetObject.transform.position.z));
+        //head.localRotation = Quaternion.Euler(head.localRotation.x,
+        //    Mathf.Clamp(head.localRotation.y, -45f, 45f) ,
+        //    head.localRotation.z);
+    }
+
+    private void RotateBody()
+    {
+        //body.forward =_rigidbody.velocity.normalized;
+        
+        body.forward =Vector3.Lerp(body.forward,_rigidbody.velocity.normalized,0.1f);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawRay(transform.position,_rigidbody.velocity);
+        Gizmos.DrawRay(body.position,body.forward);
+    }
+
+    float Angle360(Vector3 from, Vector3 to, Vector3 right) 
+    {
+        float angle = Vector3.Angle(from, to);
+        return (Vector3.Angle(right, to) > 90f) ? 360f - angle : angle;
+        
     }
     
     private void InitializeTarget()
