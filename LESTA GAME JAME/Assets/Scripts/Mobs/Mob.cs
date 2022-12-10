@@ -2,12 +2,13 @@ using System;
 using UnityEngine;
 
 [RequireComponent(typeof(MobMovement))]
-public class Mob : MonoBehaviour
+public abstract class Mob : MonoBehaviour
 {
-    private float _money;
-    private float _health;
+    [SerializeField] private float _health;
 
     private MobMovement _mobMovement;
+
+    protected bool _canApplyDamage = true;
 
     public event Action<Mob> Died;
 
@@ -16,9 +17,11 @@ public class Mob : MonoBehaviour
         _mobMovement = GetComponent<MobMovement>();
     }
 
-    public void ApplyDamage(float damage)
+    public void ApplyDamage()
     {
-        _health -= damage;
+        if (!_canApplyDamage)
+            return;
+        _health--;
 
         if (_health <= 0)
         {  
@@ -30,10 +33,14 @@ public class Mob : MonoBehaviour
     private void Die()
     {
         Died?.Invoke(this);
+        DropLoot();
+        _canApplyDamage = false;
+        gameObject.SetActive(false);
     }
 
     public void StartMovement()
     {
         _mobMovement.Restart();
     }
+    protected abstract void DropLoot();
 }

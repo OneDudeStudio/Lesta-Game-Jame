@@ -80,7 +80,6 @@ public class MobMovement : MonoBehaviour
 
     public void Stop()
     {
-        _navMeshAgent.SetDestination(transform.position);
         _navMeshAgent.speed = 0;
         StopAllCoroutines();
     }
