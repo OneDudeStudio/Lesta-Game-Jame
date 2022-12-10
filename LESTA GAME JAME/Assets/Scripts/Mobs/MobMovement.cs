@@ -46,7 +46,9 @@ public class MobMovement : MonoBehaviour
     
     private IEnumerator PatrolCoroutine()
     {
-        yield return new WaitUntil(() => IsDistanceReached(transform.position,_targetPoints[_targetPointIndex].position, Distance));
+        yield return new WaitUntil(() 
+            => IsDistanceReached(transform.position,_targetPoints[_targetPointIndex].position, Distance));
+        
         if (_targetPointIndex + 1 != _targetPoints.Count)
         {
             _targetPointIndex++;

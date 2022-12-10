@@ -16,11 +16,6 @@ public class Mob : MonoBehaviour
         _mobMovement = GetComponent<MobMovement>();
     }
 
-    private void OnEnable()
-    {
-        _mobMovement.Patrol();
-    }
-
     public void ApplyDamage(float damage)
     {
         _health -= damage;
@@ -37,7 +32,7 @@ public class Mob : MonoBehaviour
         Died?.Invoke(this);
     }
 
-    public void RestartMovement()
+    public void StartMovement()
     {
         _mobMovement.Restart();
     }
